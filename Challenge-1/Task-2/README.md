@@ -13,9 +13,8 @@ Task-2
 ├── TestLRUCache.cpp => Code to test LRUCache class functionalities
 └── Utility.hpp => Some common static utility function like logging.
 ```
-## Job-1: Compile the Program and Explain the Output Produced
-
-### The existing code implements a Least Recently Used (LRU) Cache. Here’s a detailed and ordered explanation of the LRUCache class:
+## Implementation Details
+### Detailed and ordered explanation of the LRUCache class:
 
 1. LRUCache Class: This class represents the LRU Cache. It uses weak pointers of elements (of LRUCleanable), assuming the ownership is elsewhere. It initiates a cleaning thread that calls cleanup methods of the elements once a soft limit is reached, so they can clean their resources. Also, when adding a new element, if a certain hard limit is reached, cleanup will also be carried out. Weak pointers failed to be locked will simply be removed from the cache upon cleanup.
 
@@ -47,28 +46,6 @@ Task-2
         3. **Fourth and Fifth Elements** are added, and the second element is updated, triggering another cleanup.
     - Finally, the output is **First Element Cleaned, Second Element, Third Element Cleaned, Fourth Element Cleaned, Fifth Element**, showing that the third and fourth elements have been cleaned, and the second and fifth elements are still in the cache because they were the most recently used.
 
-## Job-2: Extend This Class to Have a Cache That Takes Into Account the Size of an Element and Time
-
-* There are two approaches I considered. Both approaches have their own trade-offs in terms of time and memory complexity:
-    1. **Maintaining a Separate Sorted Data Structure**: This approach would likely have better time complexity because operations like insertion, deletion, and finding the maximum element can be done in logarithmic time if we use a balanced binary search tree or a heap-based priority queue. However, it would have higher memory complexity because we’re maintaining an additional data structure that stores pointers to all the elements.
-    2. **Using a Tiered System**: This approach would likely have better memory complexity because we’re not maintaining any additional data structures; we’re just grouping the existing elements into different tiers. However, it could have worse time complexity because we might need to scan through multiple tiers to find the elements to remove.
-* Given that the note mentions “The cache only stores pointers and a couple of variables, so, memory is not an issue”, it suggests that using additional memory to improve time efficiency is acceptable in this case. Therefore, the first approach (maintaining a separate sorted data structure) might be more suitable here.
-
-## Notes for Job-2 Implementation
-1. I enhanced the code readability while preserving the business logic.
-2. Significant changes were made in the **cleanup** and **updateElement** functions, where I introduced 'mElementSizeMap' to implement the time threshold feature.
-3. Key changes in the LRUCache class include:
-    - Addition of `mTimeThresholdSec` Member Variable: Stores the time threshold.
-    - Addition of `mElementSizeMap` Member Variable: A multimap that maps each element's size to its primary key, enabling element sorting by size.
-    - Modification of Constructor: Now accepts an additional parameter `timeThresholdSec` to set the time threshold during cache creation.
-    - Modification of `updateElement` Method: Adds the element to `mElementSizeMap` when added to the cache and removes it when updated.
-    - Modification of `cleanup` Method: Removes elements based on their size if they haven’t been accessed for more than the time threshold. Reverts to the LRU strategy if all elements in the cache have been accessed within the time threshold.
-    - Addition of `getLastAccessTime` Method to `LRUCacheElement`: Returns the last access time of an element. Used in the `cleanup` method to check if an element’s last access time exceeds the time threshold.
-    - Renaming of local variables, member variables, and method names for improved readability.
-
-* These modifications enable the LRUCache class to consider an element's size when cleaning the cache, prioritizing the removal of larger elements that haven’t been accessed for more than a certain time threshold.
-
-
 ## Executing program
 * A simple make file is added to build and run the test code, use the provided `Makefile`.
 
@@ -76,12 +53,6 @@ Task-2
 make
 ./TestLRUCache
 ```
-
-## Help
-* If any part of the changes needs further clarification, please feel free to ask.
-
-## Important
-**If you prefer a version of the code that only includes changes related to size and time consideration for easier understanding, please let me know. I have a separate version where I've made minimal changes, focusing only on the necessary modifications for implementation on top of provided code.**
 
 ## Suggestions For Improving and Optimizing
 **TODO**
